@@ -29,6 +29,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Autowired
     private EmployeeMapper employeeMapper;
+
     /**
      * 员工登录
      *
@@ -67,6 +68,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     /**
      * 新增员工
+     *
      * @param employeeDTO
      */
     @Override
@@ -90,6 +92,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     /**
      * 员工分页查询
+     *
      * @param employeePageQueryDTO
      * @return
      */
@@ -110,6 +113,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     /**
      * 启用禁用员工账号
+     *
      * @param status
      * @param id
      */
@@ -120,10 +124,34 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .id(id)
                 .updateTime(LocalDateTime.now())
                 .build();
-                employeeMapper.update(employee);
+        employeeMapper.update(employee);
     }
 
+    /**
+     * 根据id查询员工信息
+     *
+     * @param id
+     * @return
+     */
+    @Override
+    public Employee getById(Long id) {
+        Employee employee = employeeMapper.getById(id);
+        return employee;
+    }
 
+    /**
+     * 编辑员工信息
+     * @param employeeDTO
+     */
+    @Override
+    public void update(EmployeeDTO employeeDTO) {
+        Employee employee = new Employee();
+        BeanUtils.copyProperties(employeeDTO, employee);
+        employee.setUpdateTime(LocalDateTime.now());
+        //注意，这里是使用BaseContext.getCurrentId()这个工具类（线程）获取当前登录用户的id（拦截器里面已经设置好）
+        employee.setUpdateUser(BaseContext.getCurrentId());
+        employeeMapper.update(employee);
+    }
 }
 
 
