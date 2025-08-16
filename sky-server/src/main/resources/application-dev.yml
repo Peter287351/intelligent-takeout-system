@@ -6,3 +6,9 @@ sky:
     database: sky_take_out
     username: root
     password: ***REMOVED***
+#自定义阿里云OSS的配置信息
+  alioss:
+    endpoint: oss-cn-guangzhou.aliyuncs.com
+    accessKeyId: ***REMOVED***
+    accessKeySecret: REPLACED
+    bucketName: web-tlias-demo66

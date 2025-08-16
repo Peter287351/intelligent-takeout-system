@@ -122,8 +122,7 @@ public class EmployeeController {
     @ApiOperation("员工查询接口")
     public Result<Employee> getById(@PathVariable Long id) {
         log.info("员工查询接口，员工id：{}", id);
-        Employee employee = employeeService.getById(id);
-        return Result.success(employee);
+        return Result.success(employeeService.getById(id));
     }
     /**
      * 修改员工信息
