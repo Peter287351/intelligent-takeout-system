@@ -82,11 +82,11 @@ public class EmployeeServiceImpl implements EmployeeService {
         //默认密码为***REMOVED***，这里还定义了常量类，方便后续修改
         employee.setPassword(DigestUtils.md5DigestAsHex(PasswordConstant.DEFAULT_PASSWORD.getBytes()));
         //设置创建时间和修改时间
-        employee.setCreateTime(LocalDateTime.now());
-        employee.setUpdateTime(LocalDateTime.now());
+     //   employee.setCreateTime(LocalDateTime.now());
+     //   employee.setUpdateTime(LocalDateTime.now());
         //设置创建人，修改人id，即当前登录用户id，后期通过JWT获取
-        employee.setCreateUser(BaseContext.getCurrentId());
-        employee.setUpdateUser(BaseContext.getCurrentId());
+     //   employee.setCreateUser(BaseContext.getCurrentId());
+     //   employee.setUpdateUser(BaseContext.getCurrentId());
         employeeMapper.insert(employee);
     }
 
@@ -122,7 +122,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         Employee employee = Employee.builder()
                 .status(status)
                 .id(id)
-                .updateTime(LocalDateTime.now())
+                //.updateTime(LocalDateTime.now())
                 .build();
         employeeMapper.update(employee);
     }
@@ -147,9 +147,9 @@ public class EmployeeServiceImpl implements EmployeeService {
     public void update(EmployeeDTO employeeDTO) {
         Employee employee = new Employee();
         BeanUtils.copyProperties(employeeDTO, employee);
-        employee.setUpdateTime(LocalDateTime.now());
+        //    employee.setUpdateTime(LocalDateTime.now());
         //注意，这里是使用BaseContext.getCurrentId()这个工具类（线程）获取当前登录用户的id（拦截器里面已经设置好）
-        employee.setUpdateUser(BaseContext.getCurrentId());
+        //    employee.setUpdateUser(BaseContext.getCurrentId());
         employeeMapper.update(employee);
     }
 }
