@@ -5,6 +5,7 @@ import com.sky.dto.DishPageQueryDTO;
 import com.sky.result.PageResult;
 import com.sky.result.Result;
 import com.sky.service.DishService;
+import com.sky.vo.DishVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -58,4 +59,30 @@ public class DishController {
         return Result.success();
     }
 
+    /**
+     * 根据id查询菜品和对应的口味数据
+     * @param id
+     * @return
+     */
+    @GetMapping("/{id}")
+    @ApiOperation("根据id查询菜品和对应的口味数据")
+    public Result<DishVO> getById(@PathVariable Long id) {
+        log.info("根据id查询菜品和对应的口味数据:{}",id);
+        //查询菜品还要包含菜品口味数据，所以getByIdWithFlavor，即根据ID查询菜品和口味
+        DishVO dishVO = dishService.getByIdWithFlavor(id);
+        return Result.success(dishVO);
+    }
+
+    /**
+     * 根据ID修改菜品基本信息和对应的口味信息
+     * @param dishDTO
+     * @return
+     */
+    @PutMapping
+    @ApiOperation("根据ID修改菜品基本信息和对应的口味信息")
+    public Result update(@RequestBody DishDTO dishDTO) {
+        log.info("修改菜品信息:{}",dishDTO);
+        dishService.updateWithFlavor(dishDTO);
+        return Result.success();
+    }
 }

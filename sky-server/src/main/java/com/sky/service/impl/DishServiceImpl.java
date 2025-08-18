@@ -67,6 +67,12 @@ public class DishServiceImpl implements DishService {
 
     }
 
+    /**
+     * 菜品分页查询
+     *
+     * @param dishPageQueryDTO
+     * @return
+     */
     @Override
     public PageResult page(DishPageQueryDTO dishPageQueryDTO) {
         PageHelper.startPage(dishPageQueryDTO.getPage(), dishPageQueryDTO.getPageSize());
@@ -97,12 +103,55 @@ public class DishServiceImpl implements DishService {
             throw new DeletionNotAllowedException(MessageConstant.DISH_BE_RELATED_BY_SETMEAL);
         }
         //3.批量删除菜品数据
-        for (Long id : ids) {
+        /*for (Long id : ids) {
             dishMapper.deleteById(id);
             //4.删除与菜品相关的口味数据
             dishFlavorMapper.deleteByDishId(id);
-        }
-
-
+        }*/
+        //根据菜品ID集合批量删除菜品数据
+        dishMapper.deleteByIDs(ids);
+        //根据菜品ID集合批量删除关联的口味数据
+        dishFlavorMapper.deleteByDishIds(ids);
     }
+
+    /**
+     * 根据id查询菜品和对应的口味数据
+     *
+     * @param id
+     * @return
+     */
+    @Override
+    public DishVO getByIdWithFlavor(Long id) {
+        //要查询两张表
+        //1.根据ID查询菜品数据
+        Dish dish = dishMapper.getById(id);
+        //2.根据ID查询口味数据
+        List<DishFlavor> dishFlavors = dishFlavorMapper.getByDishId(id);
+        //3.将查询到的数据封装到DishVO中
+        DishVO dishVO = new DishVO();
+        BeanUtils.copyProperties(dish, dishVO);
+        dishVO.setFlavors(dishFlavors);
+        return dishVO;
+    }
+
+    @Override
+    public void updateWithFlavor(DishDTO dishDTO) {
+        //1.修改菜品表基本信息
+        Dish dish = new Dish();
+        BeanUtils.copyProperties(dishDTO, dish);
+        dishMapper.update(dish);
+        //2.删除原有的口味数据
+        dishFlavorMapper.deleteByDishId(dishDTO.getId());
+        //3.重新插入新的口味数据
+        List<DishFlavor> flavors = dishDTO.getFlavors();
+        if (flavors != null && flavors.size() > 0) {
+            flavors.forEach(dishFlavor -> {
+                //重新设置dishId,因为口味数据可能是新增的
+                dishFlavor.setDishId(dishDTO.getId());
+            });
+            dishFlavorMapper.insertBatch(flavors);
+        }
+    }
+
+
 }
