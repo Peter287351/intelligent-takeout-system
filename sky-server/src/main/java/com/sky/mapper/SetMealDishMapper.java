@@ -11,5 +11,6 @@ public interface SetMealDishMapper {
      * @param dishIds
      * @return
      */
-    List<Long> getSetMealIdsByDishId(List<Long> dishIds);
+    List<Long> getSetMealIdsByDishIds(List<Long> dishIds);
+
 }
