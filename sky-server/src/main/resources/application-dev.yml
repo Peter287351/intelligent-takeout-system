@@ -12,3 +12,8 @@ sky:
     accessKeyId: ***REMOVED***
     accessKeySecret: REPLACED
     bucketName: web-tlias-demo66
+  redis:
+      host: localhost
+      port: 6379
+      password: ***REMOVED*** #没有密码可以不设置
+      database: 0
