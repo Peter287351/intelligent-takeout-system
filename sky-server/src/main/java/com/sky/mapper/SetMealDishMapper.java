@@ -17,10 +17,18 @@ public interface SetMealDishMapper {
     List<Long> getSetMealIdsByDishIds(List<Long> dishIds);
 
     /**
-     * 批量保存套餐和菜品的关联关系
+     * Day4:批量保存套餐和菜品的关联关系
      * @param setmealDishes
      */
     void insertBatch(List<SetmealDish> setmealDishes);
+
+    /**
+     * Day4:根据套餐id查询套餐和菜品的关联关系
+     * @param setmealId
+     * @return
+     */
+    @Select("select * from setmeal_dish where setmeal_id = #{setmealId}")
+    List<SetmealDish> getBySetmealId(Long setmealId);
 
     /**
      * Day4:根据套餐id删除套餐和菜品的关联关系
@@ -28,12 +36,4 @@ public interface SetMealDishMapper {
      */
     @Delete("delete from setmeal_dish where setmeal_id = #{setmealId}")
     void deleteBySetmealId(Long setmealId);
-
-    /**
-     * Day4：根据套餐id查询套餐和菜品的关联关系
-     * @param setmealId
-     * @return
-     */
-    @Select("select * from setmeal_dish where setmeal_id = #{setmealId}")
-    List<SetmealDish> getBySetmealId(Long setmealId);
 }
