@@ -17,3 +17,7 @@ sky:
       port: 6379
       password: ***REMOVED*** #没有密码可以不设置
       database: 0
+
+  wechat:
+    appid: ***REMOVED***
+    secret: ***REMOVED***
