@@ -69,8 +69,7 @@ public class UserServiceImpl implements UserService {
         map.put("appid", weChatProperties.getAppid());
         map.put("secret", weChatProperties.getSecret());
         map.put("js_code", code);
-            map.put("grant_type", "authorization_code");
-            HttpClientUtil.doGet(WX_LOGIN_URL, map);
+        map.put("grant_type", "authorization_code");
             try {
                 String json = HttpClientUtil.doGet(WX_LOGIN_URL, map);
             //2.解析微信接口返回的json字符串，获取openid

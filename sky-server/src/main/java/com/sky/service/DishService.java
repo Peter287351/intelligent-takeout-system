@@ -49,16 +49,18 @@ public interface DishService {
     void startOrStop(Integer status, Long id);
 
     /**
+     * Day4:根据分类id查询菜品
+     * @param categoryId
+     * @return
+     */
+    List<Dish> list(Long categoryId);
+
+
+    /**
      * 条件查询菜品和口味
      * @param dish
      * @return
      */
     List<DishVO> listWithFlavor(Dish dish);
 
-    /**
-     * Day4:根据分类id查询菜品
-     * @param categoryId
-     * @return
-     */
-    List<Dish> list(Long categoryId);
 }
