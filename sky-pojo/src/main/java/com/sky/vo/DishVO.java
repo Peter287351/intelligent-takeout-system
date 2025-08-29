@@ -1,5 +1,6 @@
 package com.sky.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.sky.entity.DishFlavor;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -35,6 +36,8 @@ public class DishVO implements Serializable {
     private Integer status;
     //更新时间
     private LocalDateTime updateTime;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     //分类名称
     private String categoryName;
     //菜品关联的口味
