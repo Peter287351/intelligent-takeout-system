@@ -58,7 +58,7 @@ public interface SetmealMapper {
      * Day4：根据id删除套餐
      * @param setmealId
      */
-    @Delete("delete from setmeal where id = #{id}")
+    @Delete("delete from setmeal where id = #{setmealId}")
     void deleteById(Long setmealId);
 
     /**
