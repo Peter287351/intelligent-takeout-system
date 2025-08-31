@@ -11,6 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * @author beach
  */
@@ -32,4 +34,17 @@ public class ShoppingCartController {
         shoppingCartService.addShoppingCart(shoppingCartDTO);
         return Result.success();
     }
+
+
+    /**
+     * 查看购物车
+     * @return
+     */
+    @GetMapping("/list")
+    public Result<List<ShoppingCart>> list(){
+        log.info("查看购物车");
+        List<ShoppingCart> list = shoppingCartService.showShoppingCart();
+        return Result.success(list);
+    }
+
 }
