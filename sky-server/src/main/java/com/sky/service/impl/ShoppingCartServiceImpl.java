@@ -116,11 +116,11 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         BeanUtils.copyProperties(shoppingCartDTO, shoppingCart);
         //只能操作自己的购物车数据
         shoppingCart.setUserId(BaseContext.getCurrentId());
-        //先查询，再判断数据
+        //先查询购物车中选定商品的数据，再判断数量
         List<ShoppingCart> list = shoppingCartMapper.list(shoppingCart);
         if (list != null && list.size() > 0) {
             //获取购物车中的数据,仅一条，因为已经传入菜品ID或者套餐ID
-            //ShoppingCart cart = list.get(0);这里应该将数据保存在shoppingCart中，不是创建新的对象
+            //ShoppingCart cart = list.get(0);这里应该将数据保存在shoppingCart中，不是创建新的对象【否则没有number数据】
             shoppingCart = list.get(0);
             //判断当前数据中的number是否为1
             Integer number = shoppingCart.getNumber();
