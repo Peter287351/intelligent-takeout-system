@@ -6,18 +6,25 @@ sky:
     database: sky_take_out
     username: root
     password: ***REMOVED***
-#自定义阿里云OSS的配置信息
+  #自定义阿里云OSS的配置信息
   alioss:
     endpoint: oss-cn-guangzhou.aliyuncs.com
     accessKeyId: ***REMOVED***
     accessKeySecret: REPLACED
     bucketName: web-tlias-demo66
   redis:
-      host: localhost
-      port: 6379
-      password: ***REMOVED*** #没有密码可以不设置
-      database: 0
+    host: localhost
+    port: 6379
+    password: ***REMOVED*** #没有密码可以不设置
+    database: 0
 
   wechat:
     appid: ***REMOVED***
     secret: ***REMOVED***
+#    mchid:
+#    mchSerialNo:
+#    privateKeyFilePath:
+#    apiV3Key:
+#    weChatPayCertFilePat:
+#    notifyUrl:
+#    refundNotifyUrl:
