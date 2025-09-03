@@ -51,6 +51,7 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private UserMapper userMapper;
 
+
     //设置全局变量
     private Orders orders;
 
