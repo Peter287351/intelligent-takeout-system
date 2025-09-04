@@ -483,11 +483,15 @@ public class OrderServiceImpl implements OrderService {
     public void cancel(OrdersCancelDTO ordersCancelDTO) throws Exception {
         // 根据id查询订单
         Orders ordersDB = orderMapper.getById(ordersCancelDTO.getId());
+        // 订单只有存在且状态为3，4，5（待接单）才可以取消订单
+
+
+
 
         //支付状态
         Integer payStatus = ordersDB.getPayStatus();
         if (payStatus == Orders.PAID) {
-                //用户已支付，需要退款
+                /*//用户已支付，需要退款
                 String refund = weChatPayUtil.refund(
                         ordersDB.getNumber(),
                         ordersDB.getNumber(),
@@ -495,15 +499,17 @@ public class OrderServiceImpl implements OrderService {
                         new BigDecimal(0.01));
 
                 log.info("申请退款：{}", refund);
+*/
+            // 管理端取消订单需要退款，根据订单id更新订单状态、取消原因、取消时间
+            Orders orders = new Orders();
+            orders.setId(ordersCancelDTO.getId());
+            orders.setStatus(Orders.CANCELLED);
+            orders.setCancelReason(ordersCancelDTO.getCancelReason());
+            orders.setCancelTime(LocalDateTime.now());
+            orderMapper.update(orders);
         }
 
-        // 管理端取消订单需要退款，根据订单id更新订单状态、取消原因、取消时间
-        Orders orders = new Orders();
-        orders.setId(ordersCancelDTO.getId());
-        orders.setStatus(Orders.CANCELLED);
-        orders.setCancelReason(ordersCancelDTO.getCancelReason());
-        orders.setCancelTime(LocalDateTime.now());
-        orderMapper.update(orders);
+
     }
 
     /**
