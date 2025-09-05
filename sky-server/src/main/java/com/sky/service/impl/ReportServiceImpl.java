@@ -81,7 +81,7 @@ public class ReportServiceImpl implements ReportService {
      * @return
      */
     @Override
-    public Object getUserStatistics(LocalDate begin, LocalDate end) {
+    public UserReportVO getUserStatistics(LocalDate begin, LocalDate end) {
         //1.存放从begin到end之间的每天对应的日期
         List<LocalDate> dateList = new ArrayList<>();
         dateList.add(begin);
