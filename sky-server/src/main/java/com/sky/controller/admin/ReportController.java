@@ -36,4 +36,19 @@ public class ReportController {
         log.info("营业额统计：{}到{}",begin,end);
         return Result.success(reportService.getTurnoverStatistics(begin,end));
     }
+
+    /**
+     * 用户统计
+     * @param begin
+     * @param end
+     * @return
+     */
+    @GetMapping("/userStatistics")
+    @ApiOperation("用户统计")
+    public Result userStatistics(
+            @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate begin,
+            @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate end){
+        log.info("用户数据统计：{}到{}",begin,end);
+        return Result.success(reportService.getUserStatistics(begin,end));
+    }
 }
