@@ -34,6 +34,7 @@
         where id = #{id}
     </update>
 
+
     <insert id="insert" parameterType="Setmeal" useGeneratedKeys="true" keyProperty="id">
         insert into setmeal
         (category_id, name, price, status, description, image, create_time, update_time, create_user, update_user)
@@ -76,6 +77,14 @@
             <if test="status != null">
                 and status = #{status}
             </if>
+        </where>
+    </select>
+<!--Day12-->
+    <select id="countByMap" resultType="java.lang.Integer">
+        select count(id) from setmeal
+        <where>
+            <if test="status != null"> and status = #{status} </if>
+            <if test="categoryId != null"> and category_id = #{categoryId} </if>
         </where>
     </select>
 </mapper>

@@ -71,7 +71,7 @@ public class ReportController {
         return Result.success(reportService.getOrdersStatistics(begin, end));
     }
     /**
-     * 销量排名
+         * 销量排名
      *
      * @param begin
      * @param end
