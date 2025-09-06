@@ -1,10 +1,12 @@
 package com.sky.service.impl;
 
+import com.sky.dto.GoodsSalesDTO;
 import com.sky.entity.Orders;
 import com.sky.mapper.OrderMapper;
 import com.sky.mapper.UserMapper;
 import com.sky.service.ReportService;
 import com.sky.vo.OrderReportVO;
+import com.sky.vo.SalesTop10ReportVO;
 import com.sky.vo.TurnoverReportVO;
 import com.sky.vo.UserReportVO;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -166,6 +169,7 @@ public class ReportServiceImpl implements ReportService {
         //4.计算订单完成率
         Double orderCompletionRate = 0.0;
         if (totalOrderCount != 0) {
+            //转为double
             orderCompletionRate = validOrderCount.doubleValue() / totalOrderCount;
         }
         return OrderReportVO
@@ -186,6 +190,37 @@ public class ReportServiceImpl implements ReportService {
         map.put("status", status);
 
         return orderMapper.countByMap(map);
+    }
+
+    /**
+     * 统计指定时间区间内的销量排名top10
+     * @param begin
+     * @param end
+     * @return
+     */
+    @Override
+    public SalesTop10ReportVO getSalesTop10(LocalDate begin, LocalDate end) {
+        LocalDateTime beginTime = LocalDateTime.of(begin, LocalTime.MIN);
+        LocalDateTime endTime = LocalDateTime.of(end, LocalTime.MAX);
+
+        List<GoodsSalesDTO> salesTop10 = orderMapper.getSalesTop10(beginTime, endTime);
+
+        //将List集合（DTO）处理为VO类型，通过Stream流进行转换
+        //1.将DTO的name属性值取出来，组成一个新的List集合
+        List<String> names = salesTop10.stream().map(GoodsSalesDTO::getName).collect(Collectors.toList());
+        //转化为字符串，用逗号分隔
+        String nameList = StringUtils.join(names, ",");
+        //2.将DTO的number属性值取出来，组成一个新的List集合
+        List<Integer> numbers = salesTop10.stream().map(GoodsSalesDTO::getNumber).collect(Collectors.toList());
+        //转化为字符串，用逗号分隔
+        String numberList = StringUtils.join(numbers, ",");
+
+        //封装VO对象并返回
+        return SalesTop10ReportVO
+                .builder()
+                .nameList(nameList)
+                .numberList(numberList)
+                .build();
     }
 
 }
