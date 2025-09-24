@@ -30,6 +30,8 @@
         <jjwt>0.9.1</jjwt>
         <jaxb-api>2.3.1</jaxb-api>
         <poi>3.16</poi>
+        <!-- 微信支付 SDK 版本 -->
+        <wechatpay-apache-httpclient.version>0.4.8</wechatpay-apache-httpclient.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -121,7 +123,7 @@
             <dependency>
                 <groupId>com.github.wechatpay-apiv3</groupId>
                 <artifactId>wechatpay-apache-httpclient</artifactId>
-                <version>0.4.8</version>
+                <version>${wechatpay-apache-httpclient.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
