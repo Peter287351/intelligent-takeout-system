@@ -10,7 +10,7 @@ sky:
   alioss:
     endpoint: oss-cn-guangzhou.aliyuncs.com
     accessKeyId: ***REMOVED***
-    accessKeySecret: REPLACED
+    accessKeySecret: ***REMOVED***
     bucketName: web-tlias-demo66
   redis:
     host: localhost
