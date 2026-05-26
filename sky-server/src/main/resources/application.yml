@@ -3,7 +3,7 @@ server:
 
 spring:
   profiles:
-    active: dev
+    active: dev,secrets
   main:
     allow-circular-references: true
   datasource:
@@ -38,21 +38,21 @@ logging:
 sky:
   jwt:
     # 设置jwt签名加密时使用的秘钥
-    admin-secret-key: ***REMOVED***
+    admin-secret-key: ${sky.jwt.admin-secret-key}
     # 设置jwt过期时间
     admin-ttl: 7200000000
     # 设置前端传递过来的令牌名称
     admin-token-name: token
     # 用户令牌
-    user-secret-key: ***REMOVED***
+    user-secret-key: ${sky.jwt.user-secret-key}
     user-ttl: 7200000000
     user-token-name: authentication
 
   alioss:
     endpoint: ${sky.alioss.endpoint}
-    access-key-id: ${sky.alioss.endpoint}
-    access-key-secret: ${sky.alioss.endpoint}
-    bucket-name: ${sky.alioss.endpoint}
+    access-key-id: ${sky.alioss.accessKeyId}
+    access-key-secret: ${sky.alioss.accessKeySecret}
+    bucket-name: ${sky.alioss.bucketName}
 
   wechat:
     appid: ${sky.wechat.appid}
