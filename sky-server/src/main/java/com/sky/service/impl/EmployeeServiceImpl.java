@@ -79,7 +79,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         BeanUtils.copyProperties(employeeDTO, employee);
         //设置账号状态，默认正常状态，1表示正常，0表示锁定，这里还定义了常量类，方便后续修改
         employee.setStatus(StatusConstant.ENABLE);
-        //默认密码为***REMOVED***，这里还定义了常量类，方便后续修改
+        //默认密码为123456，这里还定义了常量类，方便后续修改
         employee.setPassword(DigestUtils.md5DigestAsHex(PasswordConstant.DEFAULT_PASSWORD.getBytes()));
         //设置创建时间和修改时间
      //   employee.setCreateTime(LocalDateTime.now());
