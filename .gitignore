@@ -46,6 +46,7 @@ nbdist/
 # 敏感配置（本地机密文件，禁止提交）
 # ========================
 **/secrets.yml
+**/application-secrets.yml
 .env
 .env.*
 
