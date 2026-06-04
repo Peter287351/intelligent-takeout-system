@@ -18,6 +18,7 @@ import com.sky.result.PageResult;
 import com.sky.service.EmployeeService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
@@ -29,6 +30,9 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Autowired
     private EmployeeMapper employeeMapper;
+
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
 
     /**
      * 员工登录
@@ -50,11 +54,19 @@ public class EmployeeServiceImpl implements EmployeeService {
         }
 
         //密码比对
-        //对前端传过来的密码进行md5加密，然后再进行比对
-        password = DigestUtils.md5DigestAsHex(password.getBytes());
-        if (!password.equals(employee.getPassword())) {
-            //密码错误
-            throw new PasswordErrorException(MessageConstant.PASSWORD_ERROR);
+        // BCrypt 加密的密码：直接用 matches() 校验
+        if (employee.getPassword().startsWith("$2a$")) {
+            if (!passwordEncoder.matches(password, employee.getPassword())) {
+                throw new PasswordErrorException(MessageConstant.PASSWORD_ERROR);
+            }
+        } else {
+            // 旧版 MD5 密码：兼容比对，成功后自动升级为 BCrypt
+            String md5Password = DigestUtils.md5DigestAsHex(password.getBytes());
+            if (!md5Password.equals(employee.getPassword())) {
+                throw new PasswordErrorException(MessageConstant.PASSWORD_ERROR);
+            }
+            employee.setPassword(passwordEncoder.encode(password));
+            employeeMapper.update(employee);
         }
 
         if (employee.getStatus() == StatusConstant.DISABLE) {
@@ -80,7 +92,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         //设置账号状态，默认正常状态，1表示正常，0表示锁定，这里还定义了常量类，方便后续修改
         employee.setStatus(StatusConstant.ENABLE);
         //默认密码为123456，这里还定义了常量类，方便后续修改
-        employee.setPassword(DigestUtils.md5DigestAsHex(PasswordConstant.DEFAULT_PASSWORD.getBytes()));
+        employee.setPassword(passwordEncoder.encode(PasswordConstant.DEFAULT_PASSWORD));
         //设置创建时间和修改时间
      //   employee.setCreateTime(LocalDateTime.now());
      //   employee.setUpdateTime(LocalDateTime.now());
