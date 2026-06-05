@@ -54,7 +54,7 @@ public class JwtTokenUserInterceptor implements HandlerInterceptor {
             //这里的empId换成userId
 
             Long UserId = Long.valueOf(claims.get(JwtClaimsConstant.USER_ID).toString());
-            log.info("当前用户的id：", UserId);
+            log.info("当前用户的id：{}", UserId);
             //在当前线程（ThreadLocal）中设置当前登录的用户id
             BaseContext.setCurrentId(UserId);
             //3、通过，放行

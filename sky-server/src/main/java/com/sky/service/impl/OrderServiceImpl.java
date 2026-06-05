@@ -22,8 +22,11 @@ import com.sky.websocket.WebSocketServer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -31,6 +34,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.springframework.util.CollectionUtils;
@@ -58,6 +62,9 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private WebSocketServer webSocketServer;
 
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
+
     //设置全局变量
     private Orders orders;
 
@@ -79,6 +86,22 @@ public class OrderServiceImpl implements OrderService {
         //查询当前用户的购物车数据
         Long userId = BaseContext.getCurrentId();
 
+        // Redis分布式锁：防止同一用户重复提交订单
+        String lockKey = "order_lock_" + userId;
+        Boolean locked = stringRedisTemplate.opsForValue()
+                .setIfAbsent(lockKey, "1", 10, TimeUnit.SECONDS);
+        if (Boolean.FALSE.equals(locked)) {
+            throw new OrderBusinessException("请勿重复提交订单");
+        }
+
+        // 注册事务同步回调：事务提交/回滚后释放锁，防止锁提前释放导致并发穿透
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCompletion(int status) {
+                stringRedisTemplate.delete(lockKey);
+            }
+        });
+
         ShoppingCart shoppingCart = new ShoppingCart();
         shoppingCart.setUserId(userId);
         List<ShoppingCart> shoppingCartList = shoppingCartMapper.list(shoppingCart);
@@ -89,6 +112,9 @@ public class OrderServiceImpl implements OrderService {
 
         //2.向订单表插入1条数据
         Orders orders = new Orders();
+        // 设置基本类型默认值，防止DTO中null值拷贝报错
+        orders.setPackAmount(0);
+        orders.setTablewareNumber(0);
         //对象拷贝
         BeanUtils.copyProperties(ordersSubmitDTO, orders);
         //设置 订单状态为待付款 和 支付状态为未支付 下单时间
