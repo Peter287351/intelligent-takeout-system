@@ -44,7 +44,7 @@ public class EmployeeController {
     @PostMapping("/login")
     @RateLimit(key = "admin_login", limit = 10, window = 60, message = "登录过于频繁，请稍后再试")
     public Result<EmployeeLoginVO> login(@RequestBody EmployeeLoginDTO employeeLoginDTO) {
-        log.info("员工登录：{}", employeeLoginDTO);
+        log.info("员工登录：{}", employeeLoginDTO.getUsername());
 
         Employee employee = employeeService.login(employeeLoginDTO);
 
@@ -84,7 +84,7 @@ public class EmployeeController {
     @PostMapping
     @ApiOperation("新增员工接口")
     public Result save(@RequestBody EmployeeDTO employeeDTO) {
-        log.info("新增员工：{}", employeeDTO);
+        log.info("新增员工：{}", employeeDTO.getUsername());
         employeeService.save(employeeDTO);
         return Result.success();
     }

@@ -40,7 +40,7 @@ public class UserController {
     @RateLimit(key = "user_login", limit = 10, window = 60, message = "登录过于频繁，请稍后再试")
     @ApiOperation("微信登录")
         public Result<UserLoginVO> login(@RequestBody UserLoginDTO userLoginDTO) {
-        log.info("微信用户登录：{}", userLoginDTO);
+        log.info("微信用户登录");
         //调用service完成微信登录
         User user = userService.wxLogin(userLoginDTO);
 
