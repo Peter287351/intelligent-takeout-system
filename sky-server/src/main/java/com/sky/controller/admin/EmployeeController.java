@@ -1,5 +1,6 @@
 package com.sky.controller.admin;
 
+import com.sky.annotation.RateLimit;
 import com.sky.constant.JwtClaimsConstant;
 import com.sky.dto.EmployeeDTO;
 import com.sky.dto.EmployeeLoginDTO;
@@ -41,6 +42,7 @@ public class EmployeeController {
      * @return
      */
     @PostMapping("/login")
+    @RateLimit(key = "admin_login", limit = 10, window = 60, message = "登录过于频繁，请稍后再试")
     public Result<EmployeeLoginVO> login(@RequestBody EmployeeLoginDTO employeeLoginDTO) {
         log.info("员工登录：{}", employeeLoginDTO);
 

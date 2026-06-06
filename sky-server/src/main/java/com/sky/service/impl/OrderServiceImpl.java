@@ -112,11 +112,14 @@ public class OrderServiceImpl implements OrderService {
 
         //2.向订单表插入1条数据
         Orders orders = new Orders();
-        // 设置基本类型默认值，防止DTO中null值拷贝报错
+        // 基本类型默认值（拷贝前设置，防止null拷贝抛异常）
         orders.setPackAmount(0);
         orders.setTablewareNumber(0);
-        //对象拷贝
         BeanUtils.copyProperties(ordersSubmitDTO, orders);
+        // 包装类型NOT NULL字段兜底（拷贝后判空，防止null覆盖导致插库报错）
+        if (orders.getTablewareStatus() == null) {
+            orders.setTablewareStatus(1);
+        }
         //设置 订单状态为待付款 和 支付状态为未支付 下单时间
         orders.setStatus(Orders.PENDING_PAYMENT);
         orders.setPayStatus(Orders.UN_PAID);

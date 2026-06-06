@@ -44,6 +44,7 @@ public class GlobalExceptionHandler {
             String msg = username + MessageConstant.ALREADY_EXIST;
             return Result.error(msg);
         }else {
+            log.error("SQL完整性约束异常：{}", message);
             return Result.error(MessageConstant.UNKNOWN_ERROR);
         }
     }
