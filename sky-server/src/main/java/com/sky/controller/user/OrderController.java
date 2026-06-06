@@ -1,7 +1,9 @@
 package com.sky.controller.user;
 
+import com.sky.annotation.RateLimit;
 import com.sky.dto.OrdersPaymentDTO;
 import com.sky.dto.OrdersSubmitDTO;
+import com.sky.enumeration.KeyType;
 import com.sky.result.PageResult;
 import com.sky.result.Result;
 import com.sky.service.OrderService;
@@ -30,6 +32,7 @@ public class OrderController {
      * @return
      */
     @PostMapping("/submit")
+    @RateLimit(key = "order_submit", limit = 1, window = 1, keyType = KeyType.USER_ID, message = "请勿重复提交订单")
     public Result<OrderSubmitVO> submit(@RequestBody OrdersSubmitDTO ordersSubmitDTO) {
         log.info("用户下单,参数为:{}", ordersSubmitDTO);
         OrderSubmitVO orderSubmitVO =orderService.submitOrder(ordersSubmitDTO);

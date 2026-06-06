@@ -1,5 +1,6 @@
 package com.sky.controller.user;
 
+import com.sky.annotation.RateLimit;
 import com.sky.constant.JwtClaimsConstant;
 import com.sky.dto.UserLoginDTO;
 import com.sky.entity.User;
@@ -36,6 +37,7 @@ public class UserController {
      * @return
      */
     @PostMapping("/login")
+    @RateLimit(key = "user_login", limit = 10, window = 60, message = "登录过于频繁，请稍后再试")
     @ApiOperation("微信登录")
         public Result<UserLoginVO> login(@RequestBody UserLoginDTO userLoginDTO) {
         log.info("微信用户登录：{}", userLoginDTO);
