@@ -1,5 +1,6 @@
 package com.sky.config;
 
+import com.sky.interceptor.AccessLogInterceptor;
 import com.sky.interceptor.JwtTokenAdminInterceptor;
 import com.sky.interceptor.JwtTokenUserInterceptor;
 import com.sky.json.JacksonObjectMapper;
@@ -29,6 +30,8 @@ import java.util.List;
 public class WebMvcConfiguration extends WebMvcConfigurationSupport {
 
     @Autowired
+    private AccessLogInterceptor accessLogInterceptor;
+    @Autowired
     private JwtTokenAdminInterceptor jwtTokenAdminInterceptor;
     @Autowired
     private JwtTokenUserInterceptor jwtTokenUserInterceptor;
@@ -40,6 +43,11 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
      */
     protected void addInterceptors(InterceptorRegistry registry) {
         log.info("开始注册自定义拦截器...");
+
+        // 访问日志——注册在第一位，afterCompletion最后执行，确保拿到userId和状态码
+        registry.addInterceptor(accessLogInterceptor)
+                .addPathPatterns("/**");
+
         registry.addInterceptor(jwtTokenAdminInterceptor)
                 .addPathPatterns("/admin/**")
                 .excludePathPatterns("/admin/employee/login");
