@@ -2,14 +2,13 @@ package com.sky.task;
 
 import com.sky.entity.Orders;
 import com.sky.mapper.OrderMapper;
-import com.sky.service.OrderService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 /**
  * 定时任务类，定时处理订单状态
@@ -17,53 +16,54 @@ import java.util.List;
 @Component
 @Slf4j
 public class OrderTask {
+
     @Autowired
     private OrderMapper orderMapper;
+
+    @Value("${sky.order.payment-timeout-minutes:30}")
+    private int paymentTimeoutMinutes;
+
+    @Value("${sky.order.delivery-timeout-hours:1}")
+    private int deliveryTimeoutHours;
+
     /**
-     * 处理超时订单的方法，超过15分钟未支付则取消订单
+     * 处理超时订单——待付款超过配置分钟数则自动取消
      */
-    //每分钟执行一次
     @Scheduled(cron = "0 * * * * ?")
-    //@Scheduled(cron = "2/5 * * * * ?")
-    public void processTimeoutOrder(){
-        log.info("定时处理超时订单:{}", LocalDateTime.now());
+    public void processTimeoutOrder() {
+        log.info("定时处理超时订单，超时阈值：{} 分钟", paymentTimeoutMinutes);
+        LocalDateTime deadline = LocalDateTime.now().minusMinutes(paymentTimeoutMinutes);
 
-        //具体业务逻辑相关的代码
-        //获取所有15分钟前的订单（集合），并且订单状态为待付款
-        LocalDateTime time = LocalDateTime.now().plusMinutes(-15);
-        List<Orders> ordersList = orderMapper.getByStatusAndOrderTimeLT(Orders.PENDING_PAYMENT, time);
+        int count = orderMapper.batchCancelTimeoutOrders(
+                Orders.CANCELLED,
+                "超时未支付，系统自动取消",
+                LocalDateTime.now(),
+                Orders.PENDING_PAYMENT,
+                deadline
+        );
 
-        //遍历集合，处理订单状态
-        if (ordersList != null && ordersList.size() > 0){
-            for (Orders orders : ordersList) {
-                //更新状态，取消超时订单
-                orders.setStatus(Orders.CANCELLED);
-                orders.setCancelReason("订单超时，自动取消");
-                orders.setCancelTime(LocalDateTime.now());
-                orderMapper.update(orders);
-            }
+        if (count > 0) {
+            log.info("已取消 {} 笔超时未支付订单", count);
         }
     }
 
     /**
-     * 处理一直处于派送中的超时订单
+     * 处理一直处于派送中的超时订单——超过配置小时数则自动完成
      */
-    //每日1点执行
     @Scheduled(cron = "0 0 1 * * ?")
-    //@Scheduled(cron = "0/5 * * * * ?")
-    public void processDeliveryOrder(){
-        log.info("定时处理派送中订单:{}", LocalDateTime.now());
-        //获取所有派送中的订单（集合），并且订单状态为派送中
-        LocalDateTime time = LocalDateTime.now().plusHours(-1);
-        List<Orders> ordersList = orderMapper.getByStatusAndOrderTimeLT(Orders.DELIVERY_IN_PROGRESS, time);
-        if (ordersList != null && ordersList.size() > 0){
-            for (Orders orders : ordersList) {
-                //更新状态，派送中订单改为已完成
-                orders.setStatus(Orders.COMPLETED);
-                orders.setDeliveryTime(LocalDateTime.now());
-                orderMapper.update(orders);
-            }
-        }
+    public void processDeliveryOrder() {
+        log.info("定时处理派送中超时订单，超时阈值：{} 小时", deliveryTimeoutHours);
+        LocalDateTime deadline = LocalDateTime.now().minusHours(deliveryTimeoutHours);
 
+        int count = orderMapper.batchCompleteDeliveryOrders(
+                Orders.COMPLETED,
+                LocalDateTime.now(),
+                Orders.DELIVERY_IN_PROGRESS,
+                deadline
+        );
+
+        if (count > 0) {
+            log.info("已完成 {} 笔派送中超时订单", count);
+        }
     }
 }

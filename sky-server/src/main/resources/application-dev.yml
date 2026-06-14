@@ -16,3 +16,9 @@ sky:
 
   wechat:
     appid: wx28bc6f1c91c9a4c3
+
+  order:
+    # 待付款订单超时时间（分钟），超过自动取消
+    payment-timeout-minutes: 30
+    # 派送中订单超时时间（小时），超过自动完成
+    delivery-timeout-hours: 1

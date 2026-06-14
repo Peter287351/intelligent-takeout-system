@@ -65,19 +65,6 @@ public interface OrderMapper {
     @Select("select count(id) from orders where status = #{status}")
     Integer countStatus(Integer status);
 
-
-    @Select("select * from orders where status = #{status} and order_time < #{orderTime}")
-    // Less Than ：LT表示小于
-    List<Orders> getByStatusAndOrderTimeLT(Integer status, LocalDateTime orderTime);
-
-
-    /**
-     * 根据状态查询订单
-     * @param status
-     * @return
-     */
-/*    List<Orders> getByStatus(Integer deliveryInProgress);*/
-
     /**
      * 根据动态条件统计营业额数据
      * @param map
@@ -99,4 +86,31 @@ public interface OrderMapper {
      * @return
      */
     List<GoodsSalesDTO> getSalesTop10(LocalDateTime begin, LocalDateTime end);
+
+    /**
+     * 批量更新订单状态——取消超时未支付订单
+     * @param targetStatus 目标状态
+     * @param cancelReason 取消原因
+     * @param cancelTime 取消时间
+     * @param currentStatus 当前状态
+     * @param deadline 截止时间（下单时间早于此时间的订单）
+     * @return 影响行数
+     */
+    @Update("update orders set status = #{targetStatus}, cancel_reason = #{cancelReason}," +
+            " cancel_time = #{cancelTime} where status = #{currentStatus} and order_time < #{deadline}")
+    int batchCancelTimeoutOrders(Integer targetStatus, String cancelReason, LocalDateTime cancelTime,
+                                 Integer currentStatus, LocalDateTime deadline);
+
+    /**
+     * 批量更新派送中订单为已完成
+     * @param targetStatus 目标状态
+     * @param deliveryTime 送达时间
+     * @param currentStatus 当前状态
+     * @param deadline 截止时间
+     * @return 影响行数
+     */
+    @Update("update orders set status = #{targetStatus}, delivery_time = #{deliveryTime}" +
+            " where status = #{currentStatus} and order_time < #{deadline}")
+    int batchCompleteDeliveryOrders(Integer targetStatus, LocalDateTime deliveryTime,
+                                    Integer currentStatus, LocalDateTime deadline);
 }
