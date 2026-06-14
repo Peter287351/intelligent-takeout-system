@@ -18,6 +18,7 @@
         <module>sky-server</module>
     </modules>
     <properties>
+        <java.version>21</java.version>
         <mybatis.spring>2.2.0</mybatis.spring>
         <lombok>1.18.30</lombok>
         <fastjson>1.2.76</fastjson>
@@ -31,6 +32,7 @@
         <jaxb-api>2.3.1</jaxb-api>
         <poi>3.16</poi>
         <spring-security-crypto>5.7.3</spring-security-crypto>
+        <langchain4j>1.0.0-beta1</langchain4j>
         <!-- 微信支付 SDK 版本 -->
         <wechatpay-apache-httpclient.version>0.4.8</wechatpay-apache-httpclient.version>
     </properties>
@@ -132,6 +134,33 @@
                 <artifactId>spring-security-crypto</artifactId>
                 <version>${spring-security-crypto}</version>
             </dependency>
+            <!-- langchain4j -->
+            <dependency>
+                <groupId>dev.langchain4j</groupId>
+                <artifactId>langchain4j</artifactId>
+                <version>${langchain4j}</version>
+            </dependency>
+            <dependency>
+                <groupId>dev.langchain4j</groupId>
+                <artifactId>langchain4j-anthropic</artifactId>
+                <version>${langchain4j}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.11.0</version>
+                    <configuration>
+                        <release>17</release>
+                        <parameters>true</parameters>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 </project>
